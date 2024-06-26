@@ -1,4 +1,4 @@
-package com.mycompany.app;
+package nl.ricoapon;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
