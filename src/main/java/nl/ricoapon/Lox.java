@@ -7,8 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import nl.ricoapon.ast.AstPrinter;
+import nl.ricoapon.ast.Expr;
 import nl.ricoapon.scanning.Scanner;
 import nl.ricoapon.scanning.Token;
+import nl.ricoapon.scanning.TokenType;
+import nl.ricoapon.parsing.Parser;
 
 public class Lox {
     static boolean hadError = false;
@@ -34,9 +38,11 @@ public class Lox {
         for (;;) {
             System.out.print("> ");
             String line = reader.readLine();
-            if (line == null)
+            if (line == null) {
                 break;
+            }
             run(line);
+            hadError = false;
         }
     }
 
@@ -44,9 +50,22 @@ public class Lox {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
-        // For now, just print the tokens.
-        for (Token token : tokens) {
-            System.out.println(token);
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
+
+        // Stop if there was a syntax error.
+        if (hadError) {
+            return;
+        }
+
+        System.out.println(new AstPrinter().print(expression));
+    }
+
+    public static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
         }
     }
 

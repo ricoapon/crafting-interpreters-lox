@@ -49,10 +49,18 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.3.0</version>
         <executions>
+          <!-- 
+          The default execution is to run Lox. Theses other executions are used when using this command:
+          mvn exec:java@<id>
+           -->
           <execution>
+            <id>generate-ast</id>
             <goals>
               <goal>java</goal>
             </goals>
+            <configuration>
+              <mainClass>nl.ricoapon.ast.GenerateAst</mainClass>
+            </configuration>
           </execution>
         </executions>
         <configuration>
