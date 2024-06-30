@@ -1,7 +1,6 @@
 package nl.ricoapon.ast;
 
 import nl.ricoapon.scanning.Token;
-import java.util.List;
 
 public abstract class Expr {
   public interface Visitor<R> {

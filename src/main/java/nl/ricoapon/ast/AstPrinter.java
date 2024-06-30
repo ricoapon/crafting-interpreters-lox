@@ -1,8 +1,5 @@
 package nl.ricoapon.ast;
 
-import nl.ricoapon.scanning.Token;
-import nl.ricoapon.scanning.TokenType;
-
 public class AstPrinter implements Expr.Visitor<String> {
     public String print(Expr expr) {
         return expr.accept(this);
