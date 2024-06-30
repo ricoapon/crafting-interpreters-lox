@@ -7,15 +7,18 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import nl.ricoapon.ast.AstPrinter;
 import nl.ricoapon.ast.Expr;
+import nl.ricoapon.evaluating.Interpreter;
+import nl.ricoapon.evaluating.LoxRuntimeError;
 import nl.ricoapon.scanning.Scanner;
 import nl.ricoapon.scanning.Token;
 import nl.ricoapon.scanning.TokenType;
 import nl.ricoapon.parsing.Parser;
 
 public class Lox {
+    private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
+    static boolean hadRuntimeError = false;
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -30,6 +33,12 @@ public class Lox {
 
     private static void runFile(String path) throws IOException {
         run(Files.readString(Paths.get(path)));
+        if (hadError) {
+            System.exit(65);
+        }
+        if (hadRuntimeError) {
+            System.exit(70);
+        }
     }
 
     private static void runPrompt() throws IOException {
@@ -58,7 +67,7 @@ public class Lox {
             return;
         }
 
-        System.out.println(new AstPrinter().print(expression));
+        interpreter.interpret(expression);
     }
 
     public static void error(Token token, String message) {
@@ -71,6 +80,11 @@ public class Lox {
 
     public static void error(int line, String message) {
         report(line, "", message);
+    }
+
+    public static void runtimeError(LoxRuntimeError error) {
+        System.err.println(error.getMessage() + "\n[line " + error.token.line + "]");
+        hadRuntimeError = true;
     }
 
     private static void report(int line, String where, String message) {
